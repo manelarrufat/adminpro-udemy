@@ -118,7 +118,11 @@ export class UsuarioService {
     return this.http.put(url, usuario).pipe(
               map( (res: any) => {
 
-                this.guardarStorage(res.usuario._id, this.token, res.usuario);
+                if (usuario._id === this.usuario._id) {
+                  this.guardarStorage(res.usuario._id, this.token, res.usuario);
+
+                }
+
 
                 swal.fire({
                   title: 'Usuari modificat ',
@@ -151,6 +155,39 @@ export class UsuarioService {
           .catch( res => {
             console.log(res);
           });
+
+  }
+
+  cargarUsuarios( desde: number = 0 ) {
+
+    const url = URL_SERVICIOS + '/usuario?desde=' + desde;
+
+    return this.http.get(url);
+
+  }
+
+  buscarUsuario( termino: string ) {
+    console.log('Termino: ', termino);
+    const url = URL_SERVICIOS + '/busqueda/coleccion/usuarios/' + termino;
+
+    return this.http.get(url).pipe(
+              map( (res: any) => res.usuarios ));
+
+  }
+
+  borrarUsuario( id: string ) {
+
+    const url = URL_SERVICIOS + '/usuario/' + id + '?token=' + this.token;
+
+    return this.http.delete(url).pipe(
+              map( res => {
+                swal.fire(
+                  'Usuari borrat!',
+                  'Usuari eliminat correctament de la base de dades.',
+                  'success'
+                );
+                return true;
+              }));
 
   }
 
